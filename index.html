@@ -1,0 +1,40 @@
+<!doctype html>
+<html>
+
+<body>
+
+  <script type="module">
+
+    import { BoxCrate } from './boxcrate.js';
+
+    const boxcrate = new BoxCrate();
+
+    let str = 'Hello World!';
+    let num = 5;
+    let bool = true;
+    let arr = [1, 2, 'Bob'];
+    let set = new Set();
+
+    set.add(1);
+    set.add('Bob');
+
+    let obj = {
+      1: 'Bob',
+      'Joe': false
+    };
+
+    let und = undefined;
+
+    let nul = null;
+
+    boxcrate.set('test', arr);
+
+    let value = boxcrate.get('test');
+
+    console.log(value, typeof(value));
+    
+  </script>
+
+</body>
+
+</html>

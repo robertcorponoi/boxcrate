@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+
+  <title>BoxCrate Tests</title>
+
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+  <link rel="stylesheet" href="../node_modules/mocha/mocha.css">
+
+</head>
+
+<body>
+
+  <div id="mocha"></div>
+
+  <script src="../node_modules/mocha/mocha.js"></script>
+  <script src="../node_modules/chai/chai.js"></script>
+  <script src="../node_modules/sinon/pkg/sinon.js"></script>
+
+  <script>
+  
+    mocha.setup('bdd');
+
+  </script>
+
+  <script type="module" src="./boxcrate.test.js"></script>
+
+  <script type="module">
+  
+    mocha.checkLeaks();
+    mocha.run();
+  
+  </script>
+
+</body>
+
+</html>
