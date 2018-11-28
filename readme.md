@@ -1,6 +1,6 @@
 <h1 align="center">BoxCrate</h1>
 
-<p align="center">A wrapper for the browser's localStorage that allows you to set and get items as they are with optional expiration times.<p>
+<p align="center">A smart wrapper for the browser's localStorage that allows you to set and get items as they are with optional expiration times.<p>
 
 <div align="center">
   <a href="https://badge.fury.io/js/boxcrate"><img src="https://badge.fury.io/js/boxcrate.svg" alt="npm version" height="18"></a>
@@ -73,12 +73,6 @@ The options for `expiredCheckType` are as follows:
 
  4. 'custom': The localStorage wil be checked every X milliseconds, as specified by you. If this option is chosen, make sure to also specify the `expireCheckTime` option.
 
-## **Properties**
-
-### **length**
-
-Returns the number of items saved in BoxCrate's storage.
-
 ```js
 const numItems = boxcrate.length;
 ```
@@ -86,6 +80,10 @@ const numItems = boxcrate.length;
 ## **API**
 
 BoxCrate aims to replicate the API of localStorage so it feels seamless switching over.
+
+### **count**
+
+Returns the number of items saved in BoxCrate's storage.
 
 ### **setItem**
 

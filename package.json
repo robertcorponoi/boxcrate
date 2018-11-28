@@ -1,7 +1,7 @@
 {
   "name": "boxcrate",
-  "version": "0.1.1",
-  "description": "A wrapper for the browser's localStorage that allows you to set and get items as they are with optional expiration times.",
+  "version": "1.0.0",
+  "description": "A smart wrapper for the browser's localStorage that allows you to set and get items as they are with optional expiration times.",
   "main": "boxcrate.js",
   "devDependencies": {
     "chai": "^4.2.0",
@@ -16,7 +16,7 @@
     "url": "https://github.com/robertcorponoi/boxcrate"
   },
   "keywords": [
-    "localStorage", "storage"
+    "localStorage", "storage", "save", "store"
   ],
   "author": "Robert Corponoi",
   "license": "MIT"

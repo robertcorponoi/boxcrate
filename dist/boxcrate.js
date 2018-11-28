@@ -118,7 +118,7 @@ class BoxCrate {
      * @property {number}
      * @readonly
      */
-    this.length = 0;
+    this._count = 0;
 
     /**
      * Initialize the check loop for expired items if desired.
@@ -128,32 +128,15 @@ class BoxCrate {
   }
 
   /**
-   * If the passive, active, or custom item expiry check process is chosen, set up the
-   * correct timer and start it to continuously check for expired items.
+   * Returns the number of items saved in BoxCrate.
    * 
    * @since 0.1.0
+   * 
+   * @returns {number} Returns the number of items in BoxCrate.
    */
-  _boot() {
+  get count() {
 
-    if (!this.expiredCheckType) return;
-
-    switch (this.expiredCheckType) {
-
-      case 'passive':
-        this.expiredCheckInterval = 60000;
-        break;
-
-      case 'active':
-        this.expiredCheckInterval = 1000;
-        break;
-
-      case 'custom':
-        this.expiredCheckInterval = this._options.expiredCheckInterval;
-        break;
-
-    }
-
-    if (this.expiredCheckType && this.expiredCheckType !== 'onGet') this.id = window.setTimeout(() => { this._checkExpiredInterval() }, this.expiredCheckInterval);
+    return this._count;
 
   }
 
@@ -170,7 +153,7 @@ class BoxCrate {
    */
   setItem(key, value, msToExpire) {
 
-    let item = {
+    const item = {
       type: null,
       timestamp: null,
       expires: null,
@@ -236,7 +219,7 @@ class BoxCrate {
 
     this.storage.setItem(key, JSON.stringify(item));
 
-    this.length++;
+    this._count++;
 
     return this;
 
@@ -253,13 +236,11 @@ class BoxCrate {
    */
   getItem(key) {
 
-    if (this.storage.length === 0) return;
+    if (this.storage.length == 0) return;
 
-    let item = this.storage.getItem(key);
+    const item = JSON.parse(this.storage.getItem(key));
 
-    item = JSON.parse(item);
-
-    if (this.expiredCheckType === 'onGet') if (this._removeExpired(key, item)) return;
+    if (this.expiredCheckType == 'onGet' && this._removeExpired(key, item)) return;
 
     return this._parse(item.data, item.type);
 
@@ -276,7 +257,7 @@ class BoxCrate {
 
     this.storage.removeItem(key);
 
-    this.length--;
+    this._count--;
 
   }
 
@@ -289,7 +270,38 @@ class BoxCrate {
 
     this.storage.clear();
 
-    this.length = 0;
+    this._count = 0;
+
+  }
+
+  /**
+   * If the passive, active, or custom item expiry check process is chosen, set up the
+   * correct timer and start it to continuously check for expired items.
+   * 
+   * @since 0.1.0
+   * @private
+   */
+  _boot() {
+
+    if (!this.expiredCheckType) return;
+
+    switch (this.expiredCheckType) {
+
+      case 'passive':
+        this.expiredCheckInterval = 60000;
+        break;
+
+      case 'active':
+        this.expiredCheckInterval = 1000;
+        break;
+
+      case 'custom':
+        this.expiredCheckInterval = this._options.expiredCheckInterval;
+        break;
+
+    }
+
+    if (this.expiredCheckType && this.expiredCheckType !== 'onGet') this.id = window.setTimeout(() => { this._checkExpiredInterval() }, this.expiredCheckInterval);
 
   }
 
@@ -298,6 +310,7 @@ class BoxCrate {
    * provided value needs to be and then it makes the provided value that type.
    * 
    * @since 0.1.0
+   * @private
    * 
    * @param {*} data The original value.
    * @param {string} expected The type of value that the original value should be.
@@ -346,6 +359,7 @@ class BoxCrate {
    * Convert a value to the best possible primitive type from a string.
    * 
    * @since 0.1.0
+   * @private
    * 
    * @param {string} value The value to convert to another primitive.
    * 
@@ -393,6 +407,7 @@ class BoxCrate {
    * above properties was used during initialization.
    * 
    * @since 0.1.0
+   * @private
    */
   _checkExpiredInterval() {
 
@@ -426,6 +441,9 @@ class BoxCrate {
    * 
    * This is used automatically by the interval and the onGet expired item checker.
    * 
+   * @since 0.1.0
+   * @private
+   * 
    * @param {string} key The key of the item as set in the storage.
    * @param {Object} item The item to check and remove.
    */
@@ -437,7 +455,7 @@ class BoxCrate {
 
         this.storage.removeItem(key);
 
-        this.length--;
+        this._count--;
 
         return true;
 

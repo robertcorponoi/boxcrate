@@ -264,7 +264,7 @@ describe('Removing items from the storage', () => {
 
     const value = boxcrate.getItem('test');
 
-    chai.expect(value).to.equal(undefined) && chai.expect(boxcrate.length).to.equal(0);
+    chai.expect(value).to.equal(undefined) && chai.expect(boxcrate.count).to.equal(0);
 
   });
 
@@ -303,7 +303,7 @@ describe('Clearing all items in the storage', () => {
 
     boxcrate.clear();
 
-    chai.expect(boxcrate.length).to.equal(0) && chai.expect(boxcrate.storage.length).to.equal(0);
+    chai.expect(boxcrate.count).to.equal(0) && chai.expect(boxcrate.storage.length).to.equal(0);
 
   });
 
@@ -347,12 +347,12 @@ describe('The storage length should reflect the current items in there', () => {
 
     boxcrate.setItem('test', str, 4000).setItem('test2', str2, 4000).setItem('test3', str3, 4000).setItem('test4', str4, 4000).setItem('test5', str5, 4000);
 
-    chai.expect(boxcrate.length).to.equal(5);
+    chai.expect(boxcrate.count).to.equal(5);
 
   });
 
   // Item should expire using the 'onGet' method.
-  it('should remove the item from storage when retrieved because the time is expired using the onGet method', () => {
+  it('should remove the item from storage when retrieved because the time is expired using the active method', () => {
 
     boxcrate = new BoxCrate({ expiredCheckType: 'active' });
 
@@ -364,9 +364,9 @@ describe('The storage length should reflect the current items in there', () => {
 
     boxcrate.setItem('test', str, 4000).setItem('test2', str2, 5000).setItem('test3', str3, 6000).setItem('test4', str4, 7000).setItem('test5', str5, 10000);
 
-    clock.tick(9000);
+    clock.tick(8000);
 
-    chai.expect(boxcrate.length).to.equal(1);
+    chai.expect(boxcrate.count).to.equal(1);
 
   });
 
