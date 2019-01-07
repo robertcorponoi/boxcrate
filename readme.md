@@ -1,3 +1,7 @@
+<p align="center">
+  <img width="250" height="250" src="./boxcrate.png">
+</p>
+
 <h1 align="center">BoxCrate</h1>
 
 <p align="center">A smart wrapper for the browser's localStorage that allows you to set and get items as they are with optional expiration times.<p>
