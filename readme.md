@@ -15,8 +15,6 @@
 
 ## **Installation**
 
-BoxCrate works as an ES6 module or just by script reference.
-
 To install this module through npm, simply use the following command:
 
 ```
@@ -26,13 +24,7 @@ $ npm install --save boxcrate
 To use it as an ES6 module you can either install it through npm or download it directly and import it as so:
 
 ```js
-import { BoxCrate } from './node_modules/boxcrate/boxcrate.js';
-```
-
-Or lastly, you can just reference the script the old fashioned way from the dist folder:
-
-```html
-<script src='./node_modules/boxcrate/dist/boxcrate.min.js'>
+import BoxCrate from './node_modules/boxcrate/boxcrate.js';
 ```
 
 ## **Initialization**
@@ -52,34 +44,22 @@ Also note that you can choose to not put an expiration date on any item you set 
 | param                        | type   | description                                                                                                                      | default |
 |------------------------------|--------|----------------------------------------------------------------------------------------------------------------------------------|---------|
 | options                      | Object |                                                                                                                                  |         |
-| options.expiredCheckType     | string | The type of expiration check to perform.                                                                                         | null    |
-| options.expiredCheckInterval | number | If you select the custom expiration check type, you can specify the interval of time in which data is checked for expired items. | 1000    |
+| options.expiredCheckType     | string | The type of expiration check to perform. (Either 'passive' or 'active')                                                                                         | null    |
+| options.expiredCheckInterval | number | If you select the passive expiration check type, you can specify the interval of time in which data is checked for expired items. | 1000    |
 
 The options for `expiredCheckType` are as follows:
 
-1. 'onGet': With the type set to 'onGet', whenever an item is set to be retrieved from localStorage, it is checked to see if it is expired and if so deleted and never retrieved.
+1. 'passive': With the type set to 'passive', whenever an item is set to be retrieved from localStorage, it is checked to see if it is expired and if so deleted and never retrieved.
 
     * **Advantage:** Very passive type of check, minimal performance cost.
 
     * **Disadvantage:** The item could be expired for a long time and still be accessible directly in the localStorage through the browser if the user checks it themselves.
 
-2. 'passive': Every 60 seconds the localStorage will be checked for expired values and if found, they will be removed.
-
-   * **Advantage:** Passive type of check, expired values are removed quickly.
-
-   * **Disadvantage:** Performance cost is higher because of a timer having to be run.
-
-3. 'active': Every second the localStorage will be checked for expired values and if found, they will be removed.
+2. 'active': Every x seconds the localStorage will be checked for expired values and if found, they will be removed.
 
    * **Advantage:** Very active type of check, expired values are removed almost instantly.
 
    * **Disadvantage:** Performance cost is highest.
-
- 4. 'custom': The localStorage wil be checked every X milliseconds, as specified by you. If this option is chosen, make sure to also specify the `expireCheckTime` option.
-
-```js
-const numItems = boxcrate.length;
-```
 
 ## **API**
 

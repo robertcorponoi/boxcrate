@@ -1,0 +1,13 @@
+2.0.0 / 2019-06-30
+==================
+* Refactored some of the parsing/converting.
+* Expanded and cleaned up test cases.
+* Removed 'custom' check type and just left the customizable 'active' check type.
+
+0.1.0
+==================
+* Changed the `length` property to a getter called `count` that returns the number of items saved in Boxcrate which also prompted the major version change.
+
+0.1.0
+==================
+* Initial Release

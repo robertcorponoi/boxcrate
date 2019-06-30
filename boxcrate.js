@@ -1,470 +1,512 @@
-'use strict'
+function _typeof(obj) {
+  if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") {
+    _typeof = function (obj) {
+      return typeof obj;
+    };
+  } else {
+    _typeof = function (obj) {
+      return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj;
+    };
+  }
+
+  return _typeof(obj);
+}
+
+function _classCallCheck(instance, Constructor) {
+  if (!(instance instanceof Constructor)) {
+    throw new TypeError("Cannot call a class as a function");
+  }
+}
+
+function _defineProperties(target, props) {
+  for (var i = 0; i < props.length; i++) {
+    var descriptor = props[i];
+    descriptor.enumerable = descriptor.enumerable || false;
+    descriptor.configurable = true;
+    if ("value" in descriptor) descriptor.writable = true;
+    Object.defineProperty(target, descriptor.key, descriptor);
+  }
+}
+
+function _createClass(Constructor, protoProps, staticProps) {
+  if (protoProps) _defineProperties(Constructor.prototype, protoProps);
+  if (staticProps) _defineProperties(Constructor, staticProps);
+  return Constructor;
+}
+
+function _defineProperty(obj, key, value) {
+  if (key in obj) {
+    Object.defineProperty(obj, key, {
+      value: value,
+      enumerable: true,
+      configurable: true,
+      writable: true
+    });
+  } else {
+    obj[key] = value;
+  }
+
+  return obj;
+}
+
+function _toConsumableArray(arr) {
+  return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _nonIterableSpread();
+}
+
+function _arrayWithoutHoles(arr) {
+  if (Array.isArray(arr)) {
+    for (var i = 0, arr2 = new Array(arr.length); i < arr.length; i++) arr2[i] = arr[i];
+
+    return arr2;
+  }
+}
+
+function _iterableToArray(iter) {
+  if (Symbol.iterator in Object(iter) || Object.prototype.toString.call(iter) === "[object Arguments]") return Array.from(iter);
+}
+
+function _nonIterableSpread() {
+  throw new TypeError("Invalid attempt to spread non-iterable instance");
+}
+
+var Options =
+/**
+ * The type of expired data checking to use.
+ * 
+ * The available options are 'passive' and 'active'.
+ * 
+ * Passive will check to see if the data is expired at the time it is querying that data. This is very performant and perfect if you're not
+ * using another application to query the localStorage.
+ * 
+ * Active will check for expired data on an interval. By default the interval is 60000ms but this can be changed.
+ * 
+ * @since 2.0.0
+ * 
+ * @property {string}
+ * 
+ * @default 'passive'
+ */
 
 /**
- * BoxCrate abstracts the use of localStorage and sessionStorage providing
- * an easy to work with interface while maintaining the full functionality
- * of those APIs.
+ * If the 'active' expired check type is used this can be used to adjust the check interval.
  * 
- * BoxCrate lets you save any type of item without having to worry about parsing
- * or formatting it first.
+ * @since 2.0.0
+ * 
+ * @property {number}
+ * 
+ * @default 60000
  */
-export class BoxCrate {
+
+/**
+ * @param {Object} [options={}] The initialization parameters from BoxCrate.
+ */
+function Options() {
+  var options = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+
+  _classCallCheck(this, Options);
+
+  _defineProperty(this, "expiredCheckType", 'passive');
+
+  _defineProperty(this, "expiredCheckInterval", 60000);
+
+  Object.assign(this, options);
+};
+
+/**
+ * BoxCrate abstracts the use of localStorage providing an easy to work with interface while maintaining the full functionality 
+ * of the original APIs.
+ * 
+ * BoxCrate works with data as it is without you having to worry about stringifying it to save it.
+ * 
+ * @author Robert Corponoi <robertcorponoi@gmail.com>
+ * 
+ * @version 2.0.0
+ */
+var BoxCrate =
+/*#__PURE__*/
+function () {
+  /**
+   * A reference to the options for this instance of BoxCrate.
+   * 
+   * @since 2.0.0
+   * 
+   * @property {Options}
+   */
+
+  /**
+   * The id of the setTimeout timer.
+   * 
+   * @since 2.0.0
+   * 
+   * @property {number}
+   */
+
+  /**
+   * The timestamp of the previous expired item check.
+   * 
+   * @since 2.0.0
+   * 
+   * @property {number}
+   */
+
+  /**
+   * The timestamp of the current expired item check.
+   * 
+   * @since 2.0.0
+   * 
+   * @property {number}
+   */
+
+  /**
+   * A reference to the window localStorage object.
+   * 
+   * @since 0.1.0
+   * 
+   * @property {Storage}
+   */
+
+  /**
+   * The amount of items in storage.
+   * 
+   * @since 0.1.0
+   * 
+   * @property {number}
+   */
 
   /**
    * @param {Object} [options]
-   * @param {string} [options.expiredCheckType=null] If an expiration time is provided when setting a value, there are four ways in which BoxCrate can check for expired items:
-   * 
-   * 1. 'onGet': With the type set to 'onGet', whenever an item is set to be retrieved from localStorage, it is checked to see if
-   * it is expired and if so deleted and never retrieved.
-   * **Advantage:** Very passive type of check, minimal performance cost.
-   * **Disadvantage:** The item could be expired for a long time and still be accessible directly in the localStorage through the
-   * browser if the user checks it themselves.
-   * 
-   * 2. 'passive': Every 60 seconds the localStorage will be checked for expired values and if found, they will be removed.
-   * **Advantage:** Passive type of check, expired values are removed quickly.
-   * **Disadvantage:** Performance cost is higher because of a timer having to be run.
-   * 
-   * 3. 'active': Every second the localStorage will be checked for expired values and if found, they will be removed.
-   * **Advantage:** Very active type of check, expired values are removed almost instantly.
-   * **Disadvantage:** Performance cost is highest.
-   * 
-   * 4. 'custom': The localStorage wil be checked every X milliseconds, as specified by you. If this option is chosen, make sure to
-   * also specify the `expireCheckTime` option.
-   * 
-   * @param {number} [options.expiredCheckInterval=0] If a custom expired check timer is chosen, specify the interval in milliseconds here.
+   * @param {string} [options.expiredCheckType='passive'] The type of check to use for expired data.
+   * @param {number} [options.expiredCheckInterval=60000] If 'active' monitoring is used this can be used to change the check interval.
    */
-  constructor(options = {}) {
+  function BoxCrate(options) {
+    _classCallCheck(this, BoxCrate);
 
-    /**
-     * Create an options object by merging the user selected options
-     * with the defaults.
-     * 
-     * @property {Object}
-     * @readonly
-     */
-    this._options = Object.assign({
+    _defineProperty(this, "options", void 0);
 
-      /**
-       * The type of expired value check to perform.
-       * 
-       * Choices are: 'onGet', 'passive', 'active', or 'custom'.
-       * 
-       * @property {string}
-       * @default null
-       */
-      expiredCheckType: null,
+    _defineProperty(this, "timer", 0);
 
-      /**
-       * If the custom expired item check type is selected, this is the interval.
-       * 
-       * @property {number}
-       * @default 0
-       */
-      expiredCheckInterval: 1000
+    _defineProperty(this, "previousCheckTime", 0);
 
-    }, options);
+    _defineProperty(this, "currentCheckTime", 0);
 
-    /**
-     * The id of the `setTimeout` timer used to check for expired items.
-     * 
-     * @property {number}
-     * @readonly
-     */
-    this.id = null;
+    _defineProperty(this, "storage", window.localStorage);
 
-    /**
-     * The timestamp of the last expired item check.
-     * 
-     * @property {number}
-     * @readonly
-     */
-    this.prev = 0;
+    _defineProperty(this, "count", 0);
 
-    /**
-     * The timestamp of the current expired item check.
-     * 
-     * @property {DOMHighResTimestamp}
-     * @readonly
-     */
-    this.time = 0;
-
-    /**
-     * The method to use for checking for expired items.
-     * 
-     * @property {string}
-     * @readonly
-     */
-    this.expiredCheckType = this._options.expiredCheckType;
-
-    /**
-     * The custom interval for checking for expired items.
-     * 
-     * @property {number}
-     * @readonly
-     */
-    this.expiredCheckInterval = null;
-
-    /**
-     * A reference to the localStorage Storage object.
-     * 
-     * @property {window.localStorage}
-     * @readonly
-     */
-    this.storage = window.localStorage;
-
-    /**
-     * The number of data items stored in the BoxCrate storage.
-     * 
-     * @property {number}
-     * @readonly
-     */
-    this._count = 0;
-
-    /**
-     * Initialize the check loop for expired items if desired.
-     */
-    this._boot();
-
+    this.options = new Options(options);
+    this.boot();
   }
-
   /**
-   * Returns the number of items saved in BoxCrate.
+   * Saves an item.
    * 
    * @since 0.1.0
    * 
-   * @returns {number} Returns the number of items in BoxCrate.
-   */
-  get count() {
-
-    return this._count;
-
-  }
-
-  /**
-   * Save an item to the BoxCrate storage.
-   * 
-   * @since 0.1.0
-   * 
-   * @param {string} key The key to use for the saved item. This will be used when retrieving or modifying it.
-   * @param {*} value The item to save.
-   * @param {number} [msToExpire] The time, in milliseconds, until this key value pair expire and are removed.
+   * @param {string} id The unique id of this item used to modify or retrieve it.
+   * @param {*} value The data to save.
+   * @param {number} [msToExpire=Infinity] The amount of time, in milliseconds, until this item is considered expired.
    * 
    * @returns {BoxCrate} Returns this for chaining.
    */
-  setItem(key, value, msToExpire) {
 
-    const item = {
-      type: null,
-      timestamp: null,
-      expires: null,
-      data: null,
-    };
 
-    switch (typeof value) {
+  _createClass(BoxCrate, [{
+    key: "setItem",
+    value: function setItem(id, value) {
+      var msToExpire = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : Infinity;
+      var item = {
+        type: '',
+        timestamp: 0,
+        expires: Infinity,
+        data: null
+      };
 
-      case 'string':
-      case 'number':
-      case 'boolean':
-        item.type = typeof value;
-        item.data = value.toString();
-        break;
+      switch (_typeof(value)) {
+        case 'string':
+        case 'number':
+        case 'boolean':
+          item.type = _typeof(value);
+          item.data = value.toString();
+          break;
 
-      case 'undefined':
-        item.type = 'undefined';
-        item.data = undefined;
-        break;
+        case 'undefined':
+          item.type = 'undefined';
+          item.data = undefined;
+          break;
 
-      case 'object':
-        if (Array.isArray(value)) {
+        case 'object':
+          if (Array.isArray(value)) {
+            var _value = [];
+            var _iteratorNormalCompletion = true;
+            var _didIteratorError = false;
+            var _iteratorError = undefined;
 
-          let _value = [];
+            try {
+              for (var _iterator = value[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+                var val = _step.value;
+                if (_typeof(val) === 'object' && val !== null) val = JSON.stringify(val);
 
-          for (let val of value) {
+                _value.push(val);
+              }
+            } catch (err) {
+              _didIteratorError = true;
+              _iteratorError = err;
+            } finally {
+              try {
+                if (!_iteratorNormalCompletion && _iterator["return"] != null) {
+                  _iterator["return"]();
+                }
+              } finally {
+                if (_didIteratorError) {
+                  throw _iteratorError;
+                }
+              }
+            }
 
-            if (typeof (val) === 'object' && val !== null) val = JSON.stringify(val);
-
-            _value.push(val);
-
+            item.type = 'array';
+            item.data = _value.join('|');
+          } else if (!value) {
+            item.type = 'null';
+            item.data = null;
+          } else if (value.size) {
+            item.type = 'set';
+            item.data = _toConsumableArray(value).join();
+          } else {
+            item.type = 'object';
+            item.data = JSON.stringify(value);
           }
 
-          item.type = 'array';
-          item.data = _value.join('|');
-
-        }
-        else if (value === null) {
-
-          item.type = 'null';
-          item.data = 'null';
-
-        }
-        else if (value.size !== null && value.size !== undefined && value.size > 0) {
-
-          item.type = 'set';
-          item.data = [...value].join();
-
-        }
-        else {
-
-          item.type = 'object';
-          item.data = JSON.stringify(value);
-
-        }
-        break;
-
-    }
-
-    item.timestamp = window.performance.now();
-
-    item.expires = msToExpire;
-
-    this.storage.setItem(key, JSON.stringify(item));
-
-    this._count++;
-
-    return this;
-
-  }
-
-  /**
-   * Retrieve a saved item from the BoxCrate storage.
-   * 
-   * @since 0.1.0
-   * 
-   * @param {string} key The key that was used when the item was saved.
-   * 
-   * @returns {*} The value associated with the key as it was saved.
-   */
-  getItem(key) {
-
-    if (this.storage.length == 0) return;
-
-    const item = JSON.parse(this.storage.getItem(key));
-
-    if (this.expiredCheckType == 'onGet' && this._removeExpired(key, item)) return;
-
-    return this._parse(item.data, item.type);
-
-  }
-
-  /**
-   * Remove an items from the BoxCrate storage.
-   * 
-   * @since 0.1.0
-   * 
-   * @param {string} key The key of the item to remove.
-   */
-  removeItem(key) {
-
-    this.storage.removeItem(key);
-
-    this._count--;
-
-  }
-
-  /**
-   * Remove all items from the BoxCrate storage.
-   * 
-   * @since 0.1.0
-   */
-  clear() {
-
-    this.storage.clear();
-
-    this._count = 0;
-
-  }
-
-  /**
-   * If the passive, active, or custom item expiry check process is chosen, set up the
-   * correct timer and start it to continuously check for expired items.
-   * 
-   * @since 0.1.0
-   * @private
-   */
-  _boot() {
-
-    if (!this.expiredCheckType) return;
-
-    switch (this.expiredCheckType) {
-
-      case 'passive':
-        this.expiredCheckInterval = 60000;
-        break;
-
-      case 'active':
-        this.expiredCheckInterval = 1000;
-        break;
-
-      case 'custom':
-        this.expiredCheckInterval = this._options.expiredCheckInterval;
-        break;
-
-    }
-
-    if (this.expiredCheckType && this.expiredCheckType !== 'onGet') this.id = window.setTimeout(() => { this._checkExpiredInterval() }, this.expiredCheckInterval);
-
-  }
-
-  /**
-   * Parse takes a value and a string specifying what type of value that the
-   * provided value needs to be and then it makes the provided value that type.
-   * 
-   * @since 0.1.0
-   * @private
-   * 
-   * @param {*} data The original value.
-   * @param {string} expected The type of value that the original value should be.
-   * 
-   * @returns {*} The parsed value.
-   */
-  _parse(data, expected) {
-
-    switch (expected) {
-
-      case 'string':
-        return String(data);
-
-      case 'number':
-        return Number(data);
-
-      case 'boolean':
-        return Boolean(data);
-
-      case 'undefined':
-        return undefined;
-
-      case 'null':
-        return null;
-
-      case 'array':
-        let arr = [];
-        let _arr = data.split('|');
-
-        for (let value of _arr) {
-
-          arr.push(this._convert(value));
-
-        }
-
-        return arr;
-
-      case 'object':
-        return JSON.parse(data);
-
-    }
-
-  }
-
-  /**
-   * Convert a value to the best possible primitive type from a string.
-   * 
-   * @since 0.1.0
-   * @private
-   * 
-   * @param {string} value The value to convert to another primitive.
-   * 
-   * @returns {*} The converted value.
-   */
-  _convert(value) {
-
-    // Check boolean.
-    if (value === 'true' || value === 'false') return Boolean(value);
-
-    // Check undefined.
-    else if (value === 'undefined') return undefined;
-
-    // Check null.
-    else if (value === 'null') return null;
-
-    // Check number.
-    else if (Number(value)) return Number(value);
-
-    // Is object or string.
-    else {
-
-      try {
-
-        const obj = JSON.parse(value);
-
-        return obj;
-
-      }
-      catch (err) {
-
-        return value;
-
+          break;
       }
 
+      item.timestamp = window.performance.now();
+      item.expires = msToExpire;
+      this.storage.setItem(id, JSON.stringify(item));
+      this.count++;
+      return this;
     }
+    /**
+     * Retrieves an item.
+     * 
+     * @since 0.1.0
+     * 
+     * @param {string} id The id of the item to retrieve from storage.
+     * 
+     * @returns {*} Returns the data associated with the item.
+     */
 
-  }
+  }, {
+    key: "getItem",
+    value: function getItem(id) {
+      if (this.storage.length === 0) return;
+      var item = JSON.parse(this.storage.getItem(id));
 
-  /**
-   * Check for expired items if the expiredCheckType is set to passive, active, or
-   * custom.
-   * 
-   * This method automatically runs on a repeating `setTimeout` timer if one of the
-   * above properties was used during initialization.
-   * 
-   * @since 0.1.0
-   * @private
-   */
-  _checkExpiredInterval() {
+      if (this.options.expiredCheckType === 'passive' && item.expires) {
+        if (this.itemIsExpired(item)) {
+          this.removeItem(id);
+          return;
+        }
+      }
 
-    this.time = window.performance.now();
+      return this.parseItem(item.type, item.data);
+    }
+    /**
+     * Removes an item.
+     * 
+     * @since 0.1.0
+     * 
+     * @param {string} id The id of the item to remove from storage.
+     * 
+     * @returns {BoxCrate} Returns this for chaining.
+     */
 
-    if (this.time - this.prev >= this.expiredCheckInterval) {
+  }, {
+    key: "removeItem",
+    value: function removeItem(id) {
+      this.storage.removeItem(id);
+      this.count--;
+      return this;
+    }
+    /**
+     * Removes all items from storage.
+     * 
+     * @since 0.1.0
+     * 
+     * @returns {BoxCrate} Returns this for chaining.
+     */
 
-      for (let key in this.storage) {
+  }, {
+    key: "clear",
+    value: function clear() {
+      this.storage.clear();
+      this.count = 0;
+      return this;
+    }
+    /**
+     * Parse an item's data and return it in its original form.
+     * 
+     * @since 2.0.0
+     * 
+     * @private
+     * 
+     * @param {string} type The type of data that the data is.
+     * @param {*} data The data to parse.
+     * 
+     * @returns {*} Returns the parsed data value.
+     */
 
-        if (this.storage.hasOwnProperty(key)) {
+  }, {
+    key: "parseItem",
+    value: function parseItem(type, data) {
+      switch (type) {
+        case 'string':
+          return data.toString();
 
-          const item = JSON.parse(this.storage[key]);
+        case 'number':
+          return Number(data);
 
-          this._removeExpired(key, item);
+        case 'undefined':
+          return undefined;
 
+        case 'null':
+          return null;
+
+        case 'array':
+          var original = [];
+          var saved = data.split('|');
+          var _iteratorNormalCompletion2 = true;
+          var _didIteratorError2 = false;
+          var _iteratorError2 = undefined;
+
+          try {
+            for (var _iterator2 = saved[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
+              var item = _step2.value;
+              original.push(this.convertString(item));
+            }
+          } catch (err) {
+            _didIteratorError2 = true;
+            _iteratorError2 = err;
+          } finally {
+            try {
+              if (!_iteratorNormalCompletion2 && _iterator2["return"] != null) {
+                _iterator2["return"]();
+              }
+            } finally {
+              if (_didIteratorError2) {
+                throw _iteratorError2;
+              }
+            }
+          }
+
+          return original;
+
+        case 'boolean':
+        case 'object':
+          return JSON.parse(data);
+      }
+    }
+    /**
+     * Attempts to convert a string value into another primitive or complex type.
+     * 
+     * @since 2.0.0
+     * 
+     * @private
+     * 
+     * @param {string} value The value to attempt to convert.
+     * 
+     * @returns {*} Returns the converted value.
+     */
+
+  }, {
+    key: "convertString",
+    value: function convertString(value) {
+      switch (value) {
+        case 'true':
+        case 'false':
+          return Boolean(value);
+
+        case 'undefined':
+          return undefined;
+
+        case 'null':
+          return null;
+
+        default:
+          if (Number(value)) return Number(value);else {
+            try {
+              return JSON.parse(value);
+            } catch (err) {
+              return value;
+            }
+          }
+      }
+    }
+    /**
+     * Returns whether or not an item is expired.
+     * 
+     * @since 2.0.0
+     * 
+     * @private
+     * 
+     * @param {Item} item The item to check if expired.
+     * 
+     * @returns {boolean} Returns true if the item is expired or false otherwise.
+     */
+
+  }, {
+    key: "itemIsExpired",
+    value: function itemIsExpired(item) {
+      if (window.performance.now() - item.timestamp >= item.expires) return true;
+      return false;
+    }
+    /**
+     * Checks for expired items in the storage.
+     * 
+     * @since 0.1.0
+     * 
+     * @private
+     */
+
+  }, {
+    key: "checkForExpiredItems",
+    value: function checkForExpiredItems() {
+      var _this = this;
+
+      this.currentCheckTime = window.performance.now();
+
+      if (this.currentCheckTime - this.previousCheckTime >= this.options.expiredCheckInterval) {
+        for (var key in this.storage) {
+          if (this.storage.hasOwnProperty(key) && this.itemIsExpired(JSON.parse(this.storage[key]))) this.removeItem(key);
         }
 
+        this.previousCheckTime = this.currentCheckTime;
       }
 
-      this.prev = this.time;
-
+      this.timer = window.setTimeout(function () {
+        _this.checkForExpiredItems();
+      }, this.options.expiredCheckInterval);
     }
+    /**
+     * Set up the active expired data checking if selected.
+     * 
+     * @since 0.1.0
+     * 
+     * @private
+     */
 
-    this.id = window.setTimeout(() => { this._checkExpiredInterval() }, this.expiredCheckInterval);
+  }, {
+    key: "boot",
+    value: function boot() {
+      var _this2 = this;
 
-  }
-
-  /**
-   * Compares an items expired time to the current time and remove it from the storage
-   * if necessary.
-   * 
-   * This is used automatically by the interval and the onGet expired item checker.
-   * 
-   * @since 0.1.0
-   * @private
-   * 
-   * @param {string} key The key of the item as set in the storage.
-   * @param {Object} item The item to check and remove.
-   */
-  _removeExpired(key, item) {
-
-    if (item.expires !== null) {
-
-      if (window.performance.now() - item.timestamp >= item.expires) {
-
-        this.storage.removeItem(key);
-
-        this._count--;
-
-        return true;
-
+      if (this.options.expiredCheckType === 'active') {
+        this.timer = window.setTimeout(function () {
+          _this2.checkForExpiredItems();
+        }, this.options.expiredCheckInterval);
       }
-
     }
+  }]);
 
-    return false;
+  return BoxCrate;
+}();
 
-  }
-
-}
+export default BoxCrate;
