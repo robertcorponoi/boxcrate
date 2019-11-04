@@ -1,3 +1,9 @@
+2.0.4 / 2019-11-03
+==================
+* [FEATURE] Updated dependencies to their latest versions.
+* [MISC] Changed CHANGELOG to be a markdown file.
+* [MISC] Changed rollup bundle from 'es' to 'esm'.
+
 2.0.3 / 2019-07-17
 ==================
 * [FEATURE] Normalized the README and LICENSE file names.
