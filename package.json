@@ -1,6 +1,6 @@
 {
   "name": "boxcrate",
-  "version": "2.0.5",
+  "version": "2.0.6",
   "description": "A smart wrapper for the browser's localStorage that allows you to set and get items as they are with optional expiration times.",
   "main": "boxcrate.js",
   "module": "boxcrate.js",
