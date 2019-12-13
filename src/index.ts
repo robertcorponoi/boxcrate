@@ -9,66 +9,54 @@ import Item from './interfaces/Item';
  * of the original APIs.
  * 
  * BoxCrate works with data as it is without you having to worry about stringifying it to save it.
- * 
- * @author Robert Corponoi <robertcorponoi@gmail.com>
- * 
- * @version 2.0.0
  */
 export default class BoxCrate {
 
   /**
    * A reference to the options for this instance of BoxCrate.
    * 
-   * @since 2.0.0
+   * @private
    * 
    * @property {Options}
    */
-  options: Options;
+  private _options: Options;
 
   /**
    * The id of the setTimeout timer.
    * 
-   * @since 2.0.0
+   * @private
    * 
    * @property {number}
    */
-  timer: number = 0;
+  private _timer: number = 0;
 
   /**
    * The timestamp of the previous expired item check.
    * 
-   * @since 2.0.0
-   * 
    * @property {number}
    */
-  previousCheckTime: number = 0;
+  private _previousCheckTime: number = 0;
 
   /**
    * The timestamp of the current expired item check.
    * 
-   * @since 2.0.0
-   * 
    * @property {number}
    */
-  currentCheckTime: number = 0;
+  private _currentCheckTime: number = 0;
 
   /**
    * A reference to the window localStorage object.
    * 
-   * @since 0.1.0
-   * 
    * @property {Storage}
    */
-  storage: Storage = window.localStorage;
+  private _storage: Storage = window.localStorage;
 
   /**
    * The amount of items in storage.
    * 
-   * @since 0.1.0
-   * 
    * @property {number}
    */
-  count: number = 0;
+  private _count: number = 0;
 
   /**
    * @param {Object} [options]
@@ -77,16 +65,28 @@ export default class BoxCrate {
    */
   constructor(options?: Object) {
 
-    this.options = new Options(options);
+    this._options = new Options(options);
 
-    this.boot();
+    this._boot();
 
   }
 
   /**
-   * Saves an item.
+   * Returns the storage oboject.
    * 
-   * @since 0.1.0
+   * @returns {Storage}
+   */
+  get storage(): Storage { return this._storage; }
+
+  /**
+   * Returns the amount of items in storage.
+   * 
+   * @returns {number}
+   */
+  get count(): number { return this._count; }
+
+  /**
+   * Saves an item.
    * 
    * @param {string} id The unique id of this item used to modify or retrieve it.
    * @param {*} value The data to save.
@@ -147,9 +147,9 @@ export default class BoxCrate {
 
     item.expires = msToExpire;
 
-    this.storage.setItem(id, JSON.stringify(item));
+    this._storage.setItem(id, JSON.stringify(item));
 
-    this.count++;
+    this._count++;
 
     return this;
 
@@ -158,21 +158,19 @@ export default class BoxCrate {
   /**
    * Retrieves an item.
    * 
-   * @since 0.1.0
-   * 
    * @param {string} id The id of the item to retrieve from storage.
    * 
    * @returns {*} Returns the data associated with the item.
    */
   getItem(id: string): any {
 
-    if (this.storage.length === 0) return;
+    if (this._storage.length === 0) return;
 
-    const item: Item = JSON.parse(this.storage.getItem(id)!);
+    const item: Item = JSON.parse(this._storage.getItem(id)!);
 
-    if (this.options.expiredCheckType === 'passive' && item.expires) {
+    if (this._options.expiredCheckType === 'passive' && item.expires) {
 
-      if (this.itemIsExpired(item)) {
+      if (this._itemIsExpired(item)) {
 
         this.removeItem(id);
 
@@ -182,14 +180,12 @@ export default class BoxCrate {
 
     }
 
-    return this.parseItem(item.type, item.data);
+    return this._parseItem(item.type, item.data);
 
   }
 
   /**
    * Removes an item.
-   * 
-   * @since 0.1.0
    * 
    * @param {string} id The id of the item to remove from storage.
    * 
@@ -197,9 +193,9 @@ export default class BoxCrate {
    */
   removeItem(id: string): BoxCrate {
 
-    this.storage.removeItem(id);
+    this._storage.removeItem(id);
 
-    this.count--;
+    this._count--;
 
     return this;
 
@@ -208,15 +204,13 @@ export default class BoxCrate {
   /**
    * Removes all items from storage.
    * 
-   * @since 0.1.0
-   * 
    * @returns {BoxCrate} Returns this for chaining.
    */
   clear(): BoxCrate {
 
-    this.storage.clear();
+    this._storage.clear();
 
-    this.count = 0;
+    this._count = 0;
 
     return this;
 
@@ -225,8 +219,6 @@ export default class BoxCrate {
   /**
    * Parse an item's data and return it in its original form.
    * 
-   * @since 2.0.0
-   * 
    * @private
    * 
    * @param {string} type The type of data that the data is.
@@ -234,7 +226,7 @@ export default class BoxCrate {
    * 
    * @returns {*} Returns the parsed data value.
    */
-  private parseItem(type: string, data: any): any {
+  private _parseItem(type: string, data: any): any {
 
     switch (type) {
       case 'string':
@@ -253,7 +245,7 @@ export default class BoxCrate {
         const original: Array<any> = [];
         const saved: Array<any> = data.split('|');
 
-        for (const item of saved) original.push(this.convertString(item));
+        for (const item of saved) original.push(this._convertString(item));
 
         return original;
 
@@ -267,15 +259,13 @@ export default class BoxCrate {
   /**
    * Attempts to convert a string value into another primitive or complex type.
    * 
-   * @since 2.0.0
-   * 
    * @private
    * 
    * @param {string} value The value to attempt to convert.
    * 
    * @returns {*} Returns the converted value.
    */
-  private convertString(value: string): any {
+  private _convertString(value: string): any {
 
     switch (value) {
       case 'true':
@@ -305,15 +295,13 @@ export default class BoxCrate {
   /**
    * Returns whether or not an item is expired.
    * 
-   * @since 2.0.0
-   * 
    * @private
    * 
    * @param {Item} item The item to check if expired.
    * 
    * @returns {boolean} Returns true if the item is expired or false otherwise.
    */
-  private itemIsExpired(item: Item): boolean {
+  private _itemIsExpired(item: Item): boolean {
 
     if (window.performance.now() - item.timestamp >= item.expires) return true;
 
@@ -324,51 +312,44 @@ export default class BoxCrate {
   /**
    * Checks for expired items in the storage.
    * 
-   * @since 0.1.0
-   * 
    * @private
    */
-  private checkForExpiredItems() {
+  private _checkForExpiredItems() {
 
-    this.currentCheckTime = window.performance.now();
+    this._currentCheckTime = window.performance.now();
 
-    if (this.currentCheckTime - this.previousCheckTime >= this.options.expiredCheckInterval) {
+    if (this._currentCheckTime - this._previousCheckTime >= this._options.expiredCheckInterval) {
 
-      for (const key in this.storage) {
+      for (const key in this._storage) {
 
-        if (this.storage.hasOwnProperty(key) && this.itemIsExpired(JSON.parse(this.storage[key]))) this.removeItem(key);
+        if (this._storage.hasOwnProperty(key) && this._itemIsExpired(JSON.parse(this._storage[key]))) this.removeItem(key);
 
       }
 
-      this.previousCheckTime = this.currentCheckTime;
+      this._previousCheckTime = this._currentCheckTime;
 
     }
 
-    this.timer = window.setTimeout(() => {
+    this._timer = window.setTimeout(() => {
 
-      this.checkForExpiredItems();
+      this._checkForExpiredItems();
 
-    }, this.options.expiredCheckInterval);
+    }, this._options.expiredCheckInterval);
 
   }
 
   /**
    * Set up the active expired data checking if selected.
    * 
-   * @since 0.1.0
-   * 
    * @private
    */
-  private boot() {
+  private _boot() {
 
-    if (this.options.expiredCheckType === 'active') {
+    if (this._options.expiredCheckType === 'active') {
 
-      this.timer = window.setTimeout(() => {
-
-        this.checkForExpiredItems();
-
-
-      }, this.options.expiredCheckInterval);
+      this._timer = window.setTimeout(() => {
+        this._checkForExpiredItems();
+      }, this._options.expiredCheckInterval);
 
     }
 

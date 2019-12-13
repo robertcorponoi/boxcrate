@@ -7,10 +7,15 @@
 <p align="center">A smart wrapper for the browser's localStorage that allows you to set and get items as they are with optional expiration times.<p>
 
 <div align="center">
-  <a href="https://badge.fury.io/js/boxcrate"><img src="https://badge.fury.io/js/boxcrate.svg" alt="npm version" height="18"></a>
-  <a href="https://badge.fury.io/js/boxcrate"><img src="https://img.shields.io/badge/build-passing-brightgreen.svg" alt="build" height="18"></a>
+
+  [![NPM version](https://img.shields.io/npm/v/boxcrate.svg?style=flat)](https://www.npmjs.com/package/boxcrate)
+  [![Known Vulnerabilities](https://snyk.io/test/github/robertcorponoi/boxcrate/badge.svg)](https://snyk.io/test/github/robertcorponoi/boxcrate)
+  ![npm](https://img.shields.io/npm/dt/boxcrate)
+  [![NPM downloads](https://img.shields.io/npm/dm/boxcrate.svg?style=flat)](https://www.npmjs.com/package/boxcrate)
   <a href="https://badge.fury.io/js/boxcrate"><img src="https://img.shields.io/github/issues/robertcorponoi/boxcrate.svg" alt="issues" height="18"></a>
   <a href="https://badge.fury.io/js/boxcrate"><img src="https://img.shields.io/github/license/robertcorponoi/boxcrate.svg" alt="license" height="18"></a>
+  [![Gitter](https://badges.gitter.im/gitterHQ/gitter.svg)](https://gitter.im/robertcorponoi)
+
 </div>
 
 ## **Installation**
@@ -65,9 +70,25 @@ The options for `expiredCheckType` are as follows:
 
 BoxCrate aims to replicate the API of localStorage so it feels seamless switching over.
 
+### **storage**
+
+Returns a reference to the storage. Note, this should not be modified as it will affect the original storage also.
+
+**example:**
+
+```js
+const storage = boxcrate.storage;
+```
+
 ### **count**
 
 Returns the number of items saved in BoxCrate's storage.
+
+**example:**
+
+```js
+const numOfItems = boxcrate.count;
+```
 
 ### **setItem**
 
@@ -83,6 +104,8 @@ The only exception to this are Symbols which cannot be saved and retrieved as is
 | value      | string | The item to save.                                                                        |         |
 | msToExpire | number | The time, in milliseconds, until this key value pair should be removed from the storage. |         |
 
+**example:**
+
 ```js
 const pizzaToppings = ['Cheese', 'Pepperoni', 'Spinach'];
 
@@ -96,6 +119,8 @@ Retrieve an item from BoxCrate's storage. The item will be retrieved in the same
 | param | type   | description                            | default |
 |-------|--------|----------------------------------------|---------|
 | key   | string | The key of the saved item to retrieve. |         |
+
+**example:**
 
 ```js
 const toppings = boxcrate.getItem('toppings');
@@ -112,6 +137,8 @@ Remove a saved item from the storage by its key.
 |-------|--------|--------------------------------------|---------|
 | key   | string | The key of the saved item to remove. |         |
 
+**example:**
+
 ```js
 boxcrate.removeItem('toppings');
 ```
@@ -120,9 +147,21 @@ boxcrate.removeItem('toppings');
 
 Remove all saved items from BoxCrate's storage.
 
+**example:**
+
 ```js
 boxcrate.clear();
 ```
+
+## **Tests**
+
+Since BoxCrate's tests are run in the browser, you have to run:
+
+```bash
+$ npm run test
+```
+
+and then in your browser, go to `http://localhost:8888/test/index.html` to run the test suite.
 
 ## **License**
 

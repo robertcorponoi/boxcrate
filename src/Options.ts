@@ -2,8 +2,6 @@
 
 /**
  * Defines the options available and their defaults for BoxCrate.
- * 
- * @since 2.0.0
  */
 export default class Options {
 
@@ -17,8 +15,6 @@ export default class Options {
    * 
    * Active will check for expired data on an interval. By default the interval is 60000ms but this can be changed.
    * 
-   * @since 2.0.0
-   * 
    * @property {string}
    * 
    * @default 'passive'
@@ -27,8 +23,6 @@ export default class Options {
 
   /**
    * If the 'active' expired check type is used this can be used to adjust the check interval.
-   * 
-   * @since 2.0.0
    * 
    * @property {number}
    * 

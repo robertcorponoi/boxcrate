@@ -1,6 +1,16 @@
+2.0.5 / 2019-12-13
+==================
+* [MISC] Updated dependencies to their latest versions.
+* [MISC] Added examples to properties in README.
+* [MISC] Added more badges to README.
+* [MISC] Added tests section to README.
+* [MISC] Removed unnecessary jsdoc comments.
+* [MISC] Normalized private properties and methods by adding a _ to all of them.
+* [FEATURE] Made properties private and added the necessary getters/setters.
+
 2.0.4 / 2019-11-03
 ==================
-* [FEATURE] Updated dependencies to their latest versions.
+* [MISC] Updated dependencies to their latest versions.
 * [MISC] Changed CHANGELOG to be a markdown file.
 * [MISC] Changed rollup bundle from 'es' to 'esm'.
 
