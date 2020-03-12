@@ -11,7 +11,6 @@ import Item from './interfaces/Item';
  * BoxCrate works with data as it is without you having to worry about stringifying it to save it.
  */
 export default class BoxCrate {
-
   /**
    * A reference to the options for this instance of BoxCrate.
    * 
@@ -64,11 +63,9 @@ export default class BoxCrate {
    * @param {number} [options.expiredCheckInterval=60000] If 'active' monitoring is used this can be used to change the check interval.
    */
   constructor(options?: Object) {
-
     this._options = new Options(options);
 
     this._boot();
-
   }
 
   /**
@@ -95,7 +92,6 @@ export default class BoxCrate {
    * @returns {BoxCrate} Returns this for chaining.
    */
   setItem(id: string, value: any, msToExpire: number = Infinity): BoxCrate {
-
     const item: Item = { type: '', timestamp: 0, expires: Infinity, data: null };
 
     switch (typeof value) {
@@ -113,20 +109,16 @@ export default class BoxCrate {
 
       case 'object':
         if (Array.isArray(value)) {
-
           const _value = [];
 
           for (let val of value) {
-            
             if (typeof (val) === 'object' && val !== null) val = JSON.stringify(val);
 
             _value.push(val);
-
           }
 
           item.type = 'array';
           item.data = _value.join('|');
-
         }
         else if (!value) {
           item.type = 'null';
@@ -152,7 +144,6 @@ export default class BoxCrate {
     this._count++;
 
     return this;
-
   }
 
   /**
@@ -163,25 +154,17 @@ export default class BoxCrate {
    * @returns {*} Returns the data associated with the item.
    */
   getItem(id: string): any {
-
     if (this._storage.length === 0) return;
 
     const item: Item = JSON.parse(this._storage.getItem(id)!);
 
     if (this._options.expiredCheckType === 'passive' && item.expires) {
-
       if (this._itemIsExpired(item)) {
-
         this.removeItem(id);
-
         return;
-
       }
-
     }
-
     return this._parseItem(item.type, item.data);
-
   }
 
   /**
@@ -192,13 +175,11 @@ export default class BoxCrate {
    * @returns {BoxCrate} Returns this for chaining.
    */
   removeItem(id: string): BoxCrate {
-
     this._storage.removeItem(id);
 
     this._count--;
 
     return this;
-
   }
 
   /**
@@ -207,13 +188,11 @@ export default class BoxCrate {
    * @returns {BoxCrate} Returns this for chaining.
    */
   clear(): BoxCrate {
-
     this._storage.clear();
 
     this._count = 0;
 
     return this;
-
   }
 
   /**
@@ -227,20 +206,15 @@ export default class BoxCrate {
    * @returns {*} Returns the parsed data value.
    */
   private _parseItem(type: string, data: any): any {
-
     switch (type) {
       case 'string':
         return data.toString();
-
       case 'number':
         return Number(data);
-
       case 'undefined':
         return undefined;
-
       case 'null':
         return null;
-
       case 'array':
         const original: Array<any> = [];
         const saved: Array<any> = data.split('|');
@@ -248,12 +222,10 @@ export default class BoxCrate {
         for (const item of saved) original.push(this._convertString(item));
 
         return original;
-
       case 'boolean':
       case 'object':
         return JSON.parse(data);
     }
-
   }
 
   /**
@@ -266,21 +238,16 @@ export default class BoxCrate {
    * @returns {*} Returns the converted value.
    */
   private _convertString(value: string): any {
-
     switch (value) {
       case 'true':
       case 'false':
         return Boolean(value);
-
       case 'undefined':
         return undefined;
-
       case 'null':
         return null;
-
       default:
         if (Number(value)) return Number(value);
-
         else {
           try {
             return JSON.parse(value);
@@ -289,7 +256,6 @@ export default class BoxCrate {
           }
         }
     }
-
   }
 
   /**
@@ -302,11 +268,9 @@ export default class BoxCrate {
    * @returns {boolean} Returns true if the item is expired or false otherwise.
    */
   private _itemIsExpired(item: Item): boolean {
-
     if (window.performance.now() - item.timestamp >= item.expires) return true;
 
     return false;
-
   }
 
   /**
@@ -315,27 +279,18 @@ export default class BoxCrate {
    * @private
    */
   private _checkForExpiredItems() {
-
     this._currentCheckTime = window.performance.now();
 
     if (this._currentCheckTime - this._previousCheckTime >= this._options.expiredCheckInterval) {
-
       for (const key in this._storage) {
-
         if (this._storage.hasOwnProperty(key) && this._itemIsExpired(JSON.parse(this._storage[key]))) this.removeItem(key);
-
       }
-
       this._previousCheckTime = this._currentCheckTime;
-
     }
 
     this._timer = window.setTimeout(() => {
-
       this._checkForExpiredItems();
-
     }, this._options.expiredCheckInterval);
-
   }
 
   /**
@@ -344,15 +299,10 @@ export default class BoxCrate {
    * @private
    */
   private _boot() {
-
     if (this._options.expiredCheckType === 'active') {
-
       this._timer = window.setTimeout(() => {
         this._checkForExpiredItems();
       }, this._options.expiredCheckInterval);
-
     }
-
   }
-
 }

@@ -1,4 +1,6 @@
 function _typeof(obj) {
+  "@babel/helpers - typeof";
+
   if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") {
     _typeof = function (obj) {
       return typeof obj;
@@ -114,9 +116,7 @@ function Options() {
  * 
  * BoxCrate works with data as it is without you having to worry about stringifying it to save it.
  */
-var BoxCrate =
-/*#__PURE__*/
-function () {
+var BoxCrate = /*#__PURE__*/function () {
   /**
    * A reference to the options for this instance of BoxCrate.
    * 

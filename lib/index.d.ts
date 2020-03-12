@@ -1,63 +1,50 @@
-import Options from './Options';
 /**
  * BoxCrate abstracts the use of localStorage providing an easy to work with interface while maintaining the full functionality
  * of the original APIs.
  *
  * BoxCrate works with data as it is without you having to worry about stringifying it to save it.
- *
- * @author Robert Corponoi <robertcorponoi@gmail.com>
- *
- * @version 2.0.0
  */
 export default class BoxCrate {
     /**
      * A reference to the options for this instance of BoxCrate.
      *
-     * @since 2.0.0
+     * @private
      *
      * @property {Options}
      */
-    options: Options;
+    private _options;
     /**
      * The id of the setTimeout timer.
      *
-     * @since 2.0.0
+     * @private
      *
      * @property {number}
      */
-    timer: number;
+    private _timer;
     /**
      * The timestamp of the previous expired item check.
      *
-     * @since 2.0.0
-     *
      * @property {number}
      */
-    previousCheckTime: number;
+    private _previousCheckTime;
     /**
      * The timestamp of the current expired item check.
      *
-     * @since 2.0.0
-     *
      * @property {number}
      */
-    currentCheckTime: number;
+    private _currentCheckTime;
     /**
      * A reference to the window localStorage object.
      *
-     * @since 0.1.0
-     *
      * @property {Storage}
      */
-    storage: Storage;
+    private _storage;
     /**
      * The amount of items in storage.
      *
-     * @since 0.1.0
-     *
      * @property {number}
      */
-    count: number;
+    private _count;
     /**
      * @param {Object} [options]
      * @param {string} [options.expiredCheckType='passive'] The type of check to use for expired data.
@@ -65,9 +52,19 @@ export default class BoxCrate {
      */
     constructor(options?: Object);
     /**
-     * Saves an item.
+     * Returns the storage oboject.
      *
-     * @since 0.1.0
+     * @returns {Storage}
+     */
+    get storage(): Storage;
+    /**
+     * Returns the amount of items in storage.
+     *
+     * @returns {number}
+     */
+    get count(): number;
+    /**
+     * Saves an item.
      *
      * @param {string} id The unique id of this item used to modify or retrieve it.
      * @param {*} value The data to save.
@@ -79,8 +76,6 @@ export default class BoxCrate {
     /**
      * Retrieves an item.
      *
-     * @since 0.1.0
-     *
      * @param {string} id The id of the item to retrieve from storage.
      *
      * @returns {*} Returns the data associated with the item.
@@ -88,8 +83,6 @@ export default class BoxCrate {
     getItem(id: string): any;
     /**
      * Removes an item.
-     *
-     * @since 0.1.0
      *
      * @param {string} id The id of the item to remove from storage.
      *
@@ -99,15 +92,11 @@ export default class BoxCrate {
     /**
      * Removes all items from storage.
      *
-     * @since 0.1.0
-     *
      * @returns {BoxCrate} Returns this for chaining.
      */
     clear(): BoxCrate;
     /**
      * Parse an item's data and return it in its original form.
-     *
-     * @since 2.0.0
      *
      * @private
      *
@@ -116,11 +105,9 @@ export default class BoxCrate {
      *
      * @returns {*} Returns the parsed data value.
      */
-    private parseItem;
+    private _parseItem;
     /**
      * Attempts to convert a string value into another primitive or complex type.
-     *
-     * @since 2.0.0
      *
      * @private
      *
@@ -128,11 +115,9 @@ export default class BoxCrate {
      *
      * @returns {*} Returns the converted value.
      */
-    private convertString;
+    private _convertString;
     /**
      * Returns whether or not an item is expired.
-     *
-     * @since 2.0.0
      *
      * @private
      *
@@ -140,21 +125,17 @@ export default class BoxCrate {
      *
      * @returns {boolean} Returns true if the item is expired or false otherwise.
      */
-    private itemIsExpired;
+    private _itemIsExpired;
     /**
      * Checks for expired items in the storage.
      *
-     * @since 0.1.0
-     *
      * @private
      */
-    private checkForExpiredItems;
+    private _checkForExpiredItems;
     /**
      * Set up the active expired data checking if selected.
      *
-     * @since 0.1.0
-     *
      * @private
      */
-    private boot;
+    private _boot;
 }

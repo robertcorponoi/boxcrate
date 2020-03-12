@@ -4,7 +4,6 @@
  * Defines the options available and their defaults for BoxCrate.
  */
 export default class Options {
-
   /**
    * The type of expired data checking to use.
    * 
@@ -34,9 +33,6 @@ export default class Options {
    * @param {Object} [options={}] The initialization parameters from BoxCrate.
    */
   constructor(options: Object = {}) {
-
     Object.assign(this, options);
-
   }
-
 }

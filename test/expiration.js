@@ -6,27 +6,21 @@ let clock;
 let boxcrate;
 
 describe('Data Expiration', () => {
-
   beforeEach(() => {
-
     window.localStorage.clear();
 
     boxcrate = new BoxCrate();
 
     clock = sinon.useFakeTimers();
-
   });
 
   afterEach(() => {
-
     boxcrate = null;
 
     clock.restore();
-
   });
 
   it('should remove the expired item from storage when retrieved using passive checking', () => {
-
     boxcrate.setItem('test', 'Hello World!', 4000);
 
     clock.tick(8000);
@@ -34,11 +28,9 @@ describe('Data Expiration', () => {
     const value = boxcrate.getItem('test');
 
     chai.expect(value).to.equal(undefined);
-
   });
 
   it('should remove the item from storage when retrieved because the time is expired using the active method', () => {
-
     boxcrate = new BoxCrate({ expiredCheckType: 'active', expiredCheckInterval: 1000 });
 
     const str = 'Hello World!';
@@ -52,7 +44,5 @@ describe('Data Expiration', () => {
     clock.tick(8000);
 
     chai.expect(boxcrate.count).to.equal(1);
-
   });
-
 });
